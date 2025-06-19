@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vitalis Tech - Gestión Medica</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="logo">+ Vitalis Tech</div>
+        <nav class="nav">
+            <a href="#home" id="nav-home">Inicio</a>
+            <a href="#registro-paciente-section" id="nav-registro-paciente" class="admin-only">Registro Pacientes</a>
+            <a href="#gestion-citas-section" id="nav-gestion-citas" class="admin-only">Gestión de Citas</a>
+            <a href="#resultados-examenes-section" id="nav-resultados-examenes" class="admin-only">Resultados de Exámenes</a>
+            <a href="#historial-clinico-section" id="nav-historial-clinico">Historial Clínico</a>
+            <a href="#estadisticas-section" id="nav-estadisticas">Estadísticas</a>
+            <button class="btn-login" id="login-button" onclick="openLoginModal()">Iniciar sesión</button>
+            <button class="btn-login hidden" id="logout-button" onclick="handleLogout()">Cerrar sesión</button>
+        </nav>
+    </header>
+
+    <main class="main">
+        <section id="home" class="hero">
+            <div class="hero-text">
+                <h1>Sistema de Gestión de Pacientes</h1>
+                <p>Un software enfocado en la salud, que facilita citas, historiales médicos, tratamientos y más.</p>
+                <button class="btn-primary" id="agendar-cita-btn">Agendar cita</button>
+            </div>
+            <div class="hero-image">
+                <img src="Imagenes/DoctoraPortada.png" alt="Doctora" />
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="card">
+                <div class="icon">💓</div>
+                <h3>Historial médico</h3>
+                <p>Accede fácilmente a los historiales médicos de los pacientes.</p>
+            </div>
+
+            <div class="card">
+                <div class="icon">✅</div>
+                <h3>Exámenes de laboratorio</h3>
+                <p>Consulta los resultados de los exámenes médicos.</p>
+            </div>
+
+            <div class="card">
+                <div class="icon">📅</div>
+                <h3>Recordatorios de citas</h3>
+                <p>Recibe notificaciones para tus citas médicas.</p>
+                <div class="success-msg">¡Cita registrada con éxito!</div>
+            </div>
+        </section>
+
+        <section id="acerca-de-nosotros-section" class="module hidden">
+            <h2>📘 Acerca de Nosotros</h2>
+            <p>Vitalis Tech es una plataforma diseñada para revolucionar la forma en que se gestiona la atención médica. Nuestro objetivo es ofrecer un sistema digital accesible, eficiente y seguro que conecte a pacientes, médicos y personal de salud en un entorno moderno y organizado.</p>
+            <p>El sistema fue desarrollado por un equipo apasionado por la tecnología, la salud y la experiencia del usuario. Integra funciones clave como programación de citas médicas, seguimiento de historial clínico, resultados de laboratorio y control de datos personales, todo en un solo lugar.</p>
+            <p>Nuestra visión es facilitar procesos médicos, mejorar la trazabilidad de los pacientes y garantizar una atención más rápida, humana y precisa. En Vitalis Tech, trabajamos constantemente para seguir innovando y hacer de la salud una experiencia más conectada y eficiente.</p>
+            <h3>📞 Contacto</h3>
+            <p>¿Tienes dudas, sugerencias o deseas colaborar con nosotros?</p>
+            <p>¡Estamos aquí para ayudarte! Visitanos para crear tu historial medico y agendar tu cita correctamente.</p>
+            <p><strong>Correo electrónico:</strong> integrador@vitalistech.com</p>
+            <p><strong>Teléfono:</strong> +505 1234 5678</p>
+            <p><strong>Dirección:</strong> Managua, Nicaragua</p>
+        </section>
+
+        <section id="estadisticas-section" class="charts-section">
+            <div class="chart-container">
+                <h2 class="chart-title">Especialidades Médicas</h2>
+                <canvas id="radarChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h2 class="chart-title">Pacientes por Género</h2>
+                <canvas id="barChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h2 class="chart-title">Seguimiento de Tratamientos</h2>
+                <canvas id="pieChart"></canvas>
+            </div>
+        </section>
+
+        <section class="summary-cards">
+            <div class="summary-card">
+                <h3>🧡 Nivel de satisfacción</h3>
+                <p>98%</p>
+            </div>
+
+            <div class="summary-card">
+                <h3>📋 Citas atendidas</h3>
+                <p>41 en el último mes</p>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="loginRegisterModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <div class="container-forms">
+                <div class="form-container" id="login-form">
+                    <h2>Iniciar Sesión</h2>
+                    <form id="loginFormElement">
+                        <input type="tel" id="loginPhoneNumber" placeholder="Número de teléfono" required>
+                        <input type="password" id="loginPassword" placeholder="Contraseña" required>
+                        <button type="submit" class="btn">Entrar</button>
+                        <p class="link">¿No tienes cuenta? <a href="#" onclick="showRegister()">Regístrate</a></p>
+                    </form>
+                </div>
+                <div class="form-container" id="register-form" style="display: none;">
+                    <h2>Registrarme</h2>
+                    <form id="registerFormElement">
+                        <input type="text" id="registerFullName" placeholder="Nombre completo" required>
+                        <input type="email" id="registerEmail" placeholder="Correo electrónico" required> <input type="tel" id="registerPhoneNumber" placeholder="Número de teléfono" required>
+                        <input type="password" id="registerPassword" placeholder="Contraseña" required>
+                        <button type="submit" class="btn">Crear Cuenta</button>
+                        <p class="link">¿Ya tienes cuenta? <a href="#" onclick="showLogin()">Inicia sesión</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slider">
+        <div class="slides-container" id="slides-container">
+            <div class="slide"><img src="Imagenes/Clinca.jpg" alt="Imagen 3"></div>
+            <div class="slide"><img src="Imagenes/Dentista.jpg" alt="Imagen 4"></div>
+            <div class="slide"><img src="Imagenes/Ginecologia.jpg" alt="Imagen 6"></div>
+            <div class="slide"><img src="Imagenes/Medicina estetica.jpg" alt="Imagen 7"></div>
+            <div class="slide"><img src="Imagenes/Psicologo.jpg" alt="Imagen 10"></div>
+            <div class="slide"><img src="Imagenes/radiologo.jpg" alt="Imagen 11"></div>
+            <div class="slide"><img src="Imagenes/Traumatologia.jpg" alt="Imagen 12"></div>
+        </div>
+
+        <button class="prev" onclick="moveSlide(-1)">❮</button>
+        <button class="next" onclick="moveSlide(1)">❯</button>
+    </div>
+
+    <section class="que-puedes-hacer">
+        <h2>¿Qué puedes hacer en Vitalis Tech?</h2>
+        <p class="subtitulo">Somos tu mejor opción porque:</p>
+        <div class="opciones-container">
+            <div class="opcion">
+                <div class="texto-opcion">
+                    <h3>Gestionas tus citas</h3>
+                    <p>Podrás solicitar, cambiar o anular cualquier cita con tus especialistas. También recibirás cualquier notificación sobre novedades en ellas.</p>
+                </div>
+                <div class="imagen-opcion">
+                    <img src="Imagenes/gestion-de-proyectos.png" alt="Gestionas tus citas">
+                </div>
