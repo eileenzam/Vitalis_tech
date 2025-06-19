@@ -314,3 +314,643 @@ form input {
     border-radius: 8px;
     box-shadow: 0 0 10px #D6EFFF; 
 }
+
+h1 { 
+    text-align: center;
+    color: #0077B6; 
+}
+
+form { /* Formulario de registro de paciente */
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-top: 1rem;
+    font-weight: bold;
+    color: #2C3E50; 
+}
+
+input, select, textarea {
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    border: 1px solid #D6EFFF; 
+    border-radius: 4px;
+    color: #2C3E50; 
+}
+
+/* Clases para campos de solo lectura y editables controladas por JS */
+.readonly-field {
+    background-color: #e0e0e0 !important; /* Gris claro para indicar no editable */
+    cursor: not-allowed !important; /* Cursor de "no permitido" */
+    pointer-events: none; /* Deshabilita interacciones con el mouse */
+}
+.editable-field:not([readonly]):not([disabled]) {
+    background-color: white; /* Asegura que el campo sea blanco si es editable */
+}
+.editable-field[readonly],
+.editable-field[disabled] {
+    background-color: #e0e0e0 !important; /* Gris claro para indicar no editable */
+    cursor: not-allowed !important; /* Cursor de "no permitido" */
+    pointer-events: none; /* Deshabilita interacciones con el mouse */
+}
+
+
+fieldset {
+    margin-top: 1rem;
+    border: 1px solid #D6EFFF; 
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+legend {
+    font-weight: bold;
+    color: #0077B6; 
+    padding: 0 0.5rem;
+}
+
+/* Botón general de formularios (registro paciente) */
+button[type="submit"] {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #0077B6; 
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+    background-color: #005f87; 
+}
+
+/* Módulo de Gestión de Citas */
+#gestion-citas-section { 
+    background-color: white; 
+    padding: 2rem;
+    border-radius: 8px;
+    margin-top: 3rem;
+    box-shadow: 0 0 10px #D6EFFF;
+}
+
+#gestion-citas-section h2 {
+    color: #0077B6; 
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* Estilos generales para el botón Agregar Cita */
+#formulario-cita button[type="submit"] {
+    background-color: #27AE60; 
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+#formulario-cita button[type="submit"]:hover {
+    background-color: #219853; 
+}
+
+/* Estilos para hacer la tabla de citas y pacientes responsiva */
+.table-responsive {
+    overflow-x: auto; /* Permite el desplazamiento horizontal */
+    -webkit-overflow-scrolling: touch; /* Mejora el desplazamiento en iOS */
+    margin-top: 20px;
+}
+
+#tabla-citas, #tabla-pacientes, #tabla-mis-citas { /* APLICAR A AMBAS TABLAS + NUEVA TABLA */
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 4px 8px #D6EFFF;
+    border-radius: 8px;
+    overflow: hidden;
+    min-width: 700px;
+}
+
+#tabla-citas th,
+#tabla-citas td,
+#tabla-pacientes th,
+#tabla-pacientes td,
+#tabla-mis-citas th,
+#tabla-mis-citas td {
+    border: 1px solid #D6EFFF;
+    padding: 0.8rem;
+    text-align: left;
+    color: #2C3E50;
+    white-space: nowrap;
+}
+
+#tabla-citas th, #tabla-pacientes th, #tabla-mis-citas th {
+    background-color: #27AE60; 
+    color: black;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+#tabla-citas tr:nth-child(even), #tabla-pacientes tr:nth-child(even), #tabla-mis-citas tr:nth-child(even) {
+    background-color: #F8F8F8;
+}
+
+#tabla-citas tr:hover, #tabla-pacientes tr:hover, #tabla-mis-citas tr:hover {
+    background-color: #D6EFFF;
+}
+
+#tabla-citas button, #tabla-pacientes button {
+    background-color: #E74C3C; 
+    color: white;
+    border: none;
+    padding: 0.5rem 0.8rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+#tabla-citas button:hover, #tabla-pacientes button:hover {
+    background-color: #c0392b; 
+}
+
+/* Media query para pantallas pequeñas */
+@media screen and (max-width: 768px) {
+    #tabla-citas, #tabla-pacientes, #tabla-mis-citas {
+        display: block;
+        width: 100%;
+        min-width: unset;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    #tabla-citas thead, #tabla-pacientes thead, #tabla-mis-citas thead {
+        background-color: #27AE60; color: white;
+        display: none;
+    }
+
+    #tabla-citas tbody, #tabla-citas tr,
+    #tabla-pacientes tbody, #tabla-pacientes tr,
+    #tabla-mis-citas tbody, #tabla-mis-citas tr {
+        display: block;
+    }
+
+    #tabla-citas tr, #tabla-pacientes tr, #tabla-mis-citas tr {
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        background-color: #fff;
+        padding: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
+    
+    #tabla-citas tr:nth-child(even), #tabla-pacientes tr:nth-child(even), #tabla-mis-citas tr:nth-child(even) {
+        background-color: #fff;
+    }
+
+    #tabla-citas tr:hover, #tabla-pacientes tr:hover, #tabla-mis-citas tr:hover {
+        background-color: #fff;
+    }
+
+    #tabla-citas td, #tabla-pacientes td, #tabla-mis-citas td {
+        display: block;
+        text-align: right;
+        border: none;
+        padding-left: 50%;
+        position: relative;
+        white-space: normal;
+    }
+
+    #tabla-citas td::before, #tabla-pacientes td::before, #tabla-mis-citas td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+        color: #0077B6;
+    }
+
+    #tabla-citas td:last-child, #tabla-pacientes td:last-child {
+        text-align: center;
+        padding-left: 6px;
+        margin-top: 10px;
+        border-top: 1px solid #eee;
+        padding-top: 10px;
+    }
+
+    /* Margen de los botones*/
+    #tabla-citas td:last-child button, #tabla-pacientes td:last-child button {
+        margin: 5px;
+        display: inline-block;
+    }
+}
+
+/* Módulo Resultados de Exámenes */
+#resultados-examenes-section {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 30px auto;
+    max-width: 900px;
+    box-shadow: 0 0 10px #D6EFFF;
+    color: #2C3E50;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+}
+
+#resultados-examenes-section h2 {
+    color: #0077B6;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+#resultados-examenes-section h3 {
+    color: #0077B6;
+    margin-bottom: 1rem;
+}
+
+#resultados-examenes-section fieldset {
+    border: 1px solid #D6EFFF;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+#resultados-examenes-section legend {
+    font-weight: bold;
+    color: #0077B6;
+    padding: 0 0.5rem;
+}
+
+/* Botón de guardar examen */
+#resultados-examenes-section .btn-primary {
+    background-color: #0077B6;
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: block;
+    margin: 1.5rem auto 0 auto;
+    max-width: 300px;
+}
+
+#resultados-examenes-section .btn-primary:hover {
+    background-color: #005f8d;
+}
+
+/* SLIDER */
+.slider {
+    position: relative;
+    width: 100vw;
+    height: 500px;
+    overflow: hidden;
+    background-color: #000;
+    margin: 2rem auto;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Contenedor interno que se desliza */
+.slides-container {
+    display: flex;
+    height: 100%;
+    transition: transform 0.5s ease-in-out;
+}
+
+/* Cada slide ocupa 100% del ancho */
+.slide {
+    min-width: 100vw;
+    height: 100%;
+    display: flex; /* Imagen centrada*/
+    justify-content: center;
+    align-items: center;
+}
+
+/* Todas las imágenes del mismo tamaño */
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Botones del slider */
+.slider .prev,
+.slider .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    font-size: 2rem;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 10;
+    border-radius: 50%;
+}
+
+.slider .prev {
+    left: 10px;
+}
+
+.slider .next {
+    right: 10px;
+}
+
+/* Secciones de Que Puedes Hacer */
+.que-puedes-hacer {
+    padding: 4rem 2rem;
+    background-color: #F9FCFF;
+    text-align: center;
+}
+
+.que-puedes-hacer h2 {
+    font-size: 2.2rem;
+    color: #0077B6;
+    margin-bottom: 0.5rem;
+}
+
+.que-puedes-hacer .subtitulo {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 3rem;
+}
+
+.opciones-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2.5rem;
+}
+
+.opcion {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 1rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    max-width: 450px;
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.opcion:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.opcion .texto-opcion {
+    flex: 2;
+    padding-right: 1rem;
+}
+
+.opcion .texto-opcion h3 {
+    font-size: 1.5rem;
+    color: #0077B6;
+    margin-bottom: 0.75rem;
+}
+
+.opcion .texto-opcion p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+.opcion .imagen-opcion {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 80px;
+}
+
+.opcion .imagen-opcion img {
+    max-width: 100px;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Testimonios */
+.testimonios-section {
+    padding: 4rem 2rem;
+    background-color: #EBF7FF; 
+    text-align: center;
+}
+
+.testimonios-section h2 {
+    font-size: 2.2rem;
+    color: #0077B6;
+    margin-bottom: 2.5rem;
+}
+
+.testimonios-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.flip-card {
+    background-color: transparent;
+    width: 300px;
+    height: 400px;
+    perspective: 1000px;
+    border-radius: 1rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* La imagen no se desborde al inicio */
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+    border-radius: 1rem;
+}
+
+.flip-card:hover .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+/* --- PARA TESTIMONIOS --- */
+.flip-card-front, .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 1rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.flip-card-front {
+    background-color: white;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+}
+
+.flip-card-front img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 1rem;
+    border: 3px solid #D6EFFF; 
+    box-sizing: border-box;
+}
+
+.flip-card-back {
+    background-color: #0077B6;
+    color: white;
+    transform: rotateY(180deg);
+    padding: 2rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    overflow-y: auto;
+    justify-content: flex-start; 
+    align-items: flex-start; 
+    text-align: left; 
+}
+
+.flip-card-back .rol-testimonio {
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Historial Clínico */
+#historial-clinico-section {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 2rem auto;
+    max-width: 900px;
+    box-shadow: 0 0 10px #D6EFFF;
+}
+
+#historial-clinico-section h2 {
+    color: #0077B6;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+#historial-clinico-section .form-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+#historial-clinico-section .form-group input {
+    flex-grow: 1;
+    padding: 0.75rem;
+    border: 1px solid #D6EFFF;
+    border-radius: 4px;
+}
+
+.patient-history-display {
+    border-top: 1px solid #eee;
+    padding-top: 2rem;
+}
+
+.patient-history-display .summary-section,
+.patient-history-display .antecedentes-section,
+.patient-history-display .citas-section,
+.patient-history-display .examenes-section,
+.patient-history-display .diagnosticos-tratamientos-section {
+    background-color: #F8F8F8;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.patient-history-display h3 {
+    color: #0077B6;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #D6EFFF;
+    padding-bottom: 0.5rem;
+}
+
+.patient-history-display p.placeholder-text {
+    font-style: italic;
+    color: #777;
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.patient-history-display .btn-secondary {
+    background-color: #48C9B0;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.patient-history-display .btn-secondary:hover {
+    background-color: #3CAEA3;
+}
+
+/* Estilos para lista de diagnósticos/tratamientos y otros historiales */
+#diagnosticos-tratamientos-list div,
+#citas-history-content div,
+#examenes-history-content div,
+#antecedentes-content div {
+    border-bottom: 1px dashed #D6EFFF;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+#diagnosticos-tratamientos-list div:last-child,
+#citas-history-content div:last-child,
+#examenes-history-content div:last-child,
+#antecedentes-content div:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+#diagnosticos-tratamientos-list p,
+#citas-history-content p,
+#examenes-history-content p,
+#antecedentes-content p {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+}
+
+#diagnosticos-tratamientos-list strong,
+#citas-history-content strong,
+#examenes-history-content strong,
+#antecedentes-content strong {
+    color: #0077B6;
+}
+
+/* Descarga de historial */
+.download-history-section {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px dashed #D6EFFF;
+    background-color: #D6EFFF; 
+    border: 1px dashed #0077B6; 
+    border-radius: 8px; 
+    padding: 1.5rem; 
+}
