@@ -407,3 +407,413 @@ function updateUIForRole() {
         const calendarEl = document.getElementById('calendar');
         if (calendarEl) {
             const calendarContainer = calendarEl.closest('.calendar-and-form-container');
+                 if (calendarContainer) calendarContainer.style.display = 'none';
+        }
+
+    } else { // ROLES.GUEST 
+        // INVITADO: Home (con agendar cita), secciones públicas (sin historial clínico), Footer
+        
+        // Navegación
+        if (navHome) navHome.classList.remove('hidden');
+        if (navEstadisticas) navEstadisticas.classList.remove('hidden'); 
+        
+        // Secciones
+        if (sectionHome) sectionHome.classList.remove('hidden');
+        if (agendarCitaBtn) agendarCitaBtn.classList.remove('hidden'); 
+
+        if (sectionFeatures) sectionFeatures.classList.remove('hidden');
+        if (sectionEstadisticas) sectionEstadisticas.classList.remove('hidden');
+        if (sectionSummaryCards) sectionSummaryCards.classList.remove('hidden');
+        if (sectionSlider) sectionSlider.classList.remove('hidden');
+        if (sectionQuePuedesHacer) sectionQuePuedesHacer.classList.remove('hidden');
+        if (sectionTestimonios) sectionTestimonios.classList.remove('hidden');
+
+        // Historial Clínico (oculto para invitados)
+        if (navHistorialClinico) navHistorialClinico.classList.add('hidden');
+        if (sectionHistorialClinico) sectionHistorialClinico.classList.add('hidden');
+        if (downloadHistorySection) downloadHistorySection.classList.add('hidden');
+        if (patientAppointmentsSection) patientAppointmentsSection.classList.add('hidden'); 
+
+        if (loginButton) loginButton.classList.remove('hidden');
+        if (logoutButton) logoutButton.classList.add('hidden');
+
+        // Ocultar módulos administrativos
+        if (sectionRegistroPaciente) sectionRegistroPaciente.classList.add('hidden');
+        if (navRegistroPaciente) navRegistroPaciente.classList.add('hidden');
+        if (sectionGestionCitas) sectionGestionCitas.classList.add('hidden');
+        if (navGestionCitas) navGestionCitas.classList.add('hidden');
+        if (sectionResultadosExamenes) sectionResultadosExamenes.classList.add('hidden');
+        if (navResultadosExamenes) navResultadosExamenes.classList.add('hidden');
+
+        // Ocultar calendario para el rol de invitado
+        const calendarEl = document.getElementById('calendar');
+        if (calendarEl) {
+            const calendarContainer = calendarEl.closest('.calendar-and-form-container');
+            if (calendarContainer) calendarContainer.style.display = 'none';
+        }
+    }
+}
+
+// ****************************************************************************************************
+// Módulo de Registro de Pacientes (CRUD)
+// ****************************************************************************************************
+
+// Función para generar un nuevo ID de paciente y actualizar el campo
+function updatePatientIdField() {
+    const patientIdInput = document.getElementById('id');
+    if (patientIdInput) {
+        patientIdInput.value = nextPatientId;
+    }
+}
+
+// Clase Patient
+class Patient {
+    constructor(id, codigousuario, nombre, apellidos, fecha_nacimiento, genero, telefono, password, direccion, profesion, enfermedades_cronicas, alergias, medicacion_actual, problemas_mentales, operaciones_previas, antecedentes_familiares, tabaquismo, alcoholismo, actividad_fisica, dieta, identificacion = '', contacto_emergencia = '', religion = '', extra_email = '') {
+        this.id = id;
+        this.codigousuario = codigousuario;
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        this.fecha_nacimiento = fecha_nacimiento;
+        this.genero = genero;
+        this.telefono = telefono;
+        this.password = password; 
+        this.direccion = direccion;
+        this.profesion = profesion;
+        this.enfermedades_cronicas = enfermedades_cronicas;
+        this.alergias = alergias;
+        this.medicacion_actual = medicacion_actual;
+        this.problemas_mentales = problemas_mentales;
+        this.operaciones_previas = operaciones_previas;
+        this.antecedentes_familiares = antecedentes_familiares;
+        this.tabaquismo = tabaquismo;
+        this.alcoholismo = alcoholismo;
+        this.actividad_fisica = actividad_fisica;
+        this.dieta = dieta;
+        this.identificacion = identificacion; 
+        this.contacto_emergencia = contacto_emergencia; 
+        this.religion = religion; 
+        this.extra_email = extra_email; 
+    }
+}
+
+// Función para guardar/actualizar un paciente
+const formularioPaciente = document.getElementById('formulario-paciente');
+if(formularioPaciente) { 
+    formularioPaciente.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const patientId = parseInt(document.getElementById('id').value);
+        const codigousuario = document.getElementById('codigousuario').value;
+        const nombre = document.getElementById('nombre').value;
+        const apellidos = document.getElementById('apellidos').value;
+        const fecha_nacimiento = document.getElementById('fecha_nacimiento').value;
+        const direccion = document.getElementById('direccion').value;
+        const telefono = document.getElementById('telefono').value;
+        const password = document.getElementById('password').value;
+        const genero = document.getElementById('genero').value;
+        const identificacion = document.getElementById('identificacion').value;
+        const profesion = document.getElementById('profesion').value;
+        const contacto_emergencia = document.getElementById('contacto_emergencia').value;
+        const enfermedades_cronicas = document.getElementById('enfermedades_cronicas').value;
+        const alergias = document.getElementById('alergias').value;
+        const medicacion_actual = document.getElementById('medicacion_actual').value;
+        const problemas_mentales = document.getElementById('problemas_mentales').value;
+        const operaciones_previas = document.getElementById('operaciones_previas').value;
+        const religion = document.getElementById('religion').value;
+        const antecedentes_familiares = document.getElementById('antecedentes_familiares').value;
+        const peso = parseFloat(document.getElementById('peso').value);
+
+        const tabaquismo = document.querySelector('#formulario-paciente input[name="tabaquismo"]').checked;
+        const alcoholismo = document.querySelector('#formulario-paciente input[name="alcoholismo"]').checked;
+        const actividad_fisica = document.querySelector('#formulario-paciente input[name="actividad_fisica"]').checked;
+        const dieta = document.querySelector('#formulario-paciente input[name="dieta"]').checked;
+
+        let pacienteData = new Patient(
+            patientId, codigousuario, nombre, apellidos, fecha_nacimiento, genero, telefono, password,
+            direccion, profesion, enfermedades_cronicas, alergias, medicacion_actual, problemas_mentales,
+            operaciones_previas, antecedentes_familiares, tabaquismo, alcoholismo, actividad_fisica, dieta,
+            identificacion, contacto_emergencia, religion
+        );
+
+        const patientIndex = pacientes.findIndex(p => p.id === patientId);
+
+        if (patientIndex > -1) {
+            // Actualizar paciente existente
+            pacientes[patientIndex] = pacienteData;
+            showAlertModal('Paciente actualizado correctamente.', 'Actualización Exitosa');
+        } else {
+            // Nuevo paciente
+            if (pacientes.some(p => p.codigousuario.toLowerCase() === codigousuario.toLowerCase())) {
+                showAlertModal('El código de usuario ya existe. Por favor, elija otro.', 'Error de Registro');
+                return;
+            }
+            if (pacientes.some(p => p.telefono === telefono)) {
+                showAlertModal('El número de teléfono ya está registrado. Por favor, elija otro o inicie sesión.', 'Error de Registro');
+                return;
+            }
+            pacientes.push(pacienteData);
+            nextPatientId++;
+            showAlertModal('Paciente guardado correctamente.', 'Registro Exitoso');
+        }
+
+        localStorage.setItem('pacientes', JSON.stringify(pacientes));
+        localStorage.setItem('nextPatientId', nextPatientId);
+        this.reset();
+        updatePatientIdField();
+        mostrarPacientes();
+    });
+}
+
+// Función para mostrar la tabla de pacientes
+function mostrarPacientes(filteredPatients = pacientes) { // Acepta una lista filtrada
+    const pacientesLista = document.getElementById('pacientes-lista');
+    if (!pacientesLista) return;
+
+    pacientesLista.innerHTML = '';
+
+    if (filteredPatients.length === 0) {
+        pacientesLista.innerHTML = '<tr><td colspan="9" style="text-align: center;">No hay pacientes registrados que coincidan con la búsqueda.</td></tr>';
+    }
+
+    filteredPatients.forEach(patient => {
+        const row = pacientesLista.insertRow();
+        row.innerHTML = `
+            <td data-label="ID Paciente">${patient.id}</td>
+            <td data-label="Código Usuario">${patient.codigousuario}</td>
+            <td data-label="Nombres">${patient.nombre}</td>
+            <td data-label="Apellidos">${patient.apellidos}</td>
+            <td data-label="Fecha Nac.">${patient.fecha_nacimiento}</td>
+            <td data-label="Dirección">${patient.direccion}</td>
+            <td data-label="Teléfono">${patient.telefono}</td>
+            <td data-label="Género">${patient.genero}</td>
+            <td data-label="Acción">
+                <button class="btn-secondary btn-edit-patient" onclick="editPatient(${patient.id})">Editar</button>
+                <button class="btn-danger btn-delete-patient" onclick="deletePatient(${patient.id})">Eliminar</button>
+            </td>
+        `;
+    });
+    updateUIForRole(); // Aplicar visibilidad de botones después de cargar la tabla
+}
+
+// Función para buscar pacientes
+function searchPatients() {
+    const searchTerm = document.getElementById('patientSearchInput').value.toLowerCase();
+    const filteredPatients = pacientes.filter(patient => {
+        return (
+            String(patient.id).toLowerCase().includes(searchTerm) ||
+            patient.codigousuario.toLowerCase().includes(searchTerm) ||
+            patient.nombre.toLowerCase().includes(searchTerm) ||
+            patient.apellidos.toLowerCase().includes(searchTerm) ||
+            patient.fecha_nacimiento.toLowerCase().includes(searchTerm) ||
+            patient.telefono.toLowerCase().includes(searchTerm)
+        );
+    });
+    mostrarPacientes(filteredPatients); // Mostrar solo los pacientes filtrados
+}
+
+// Función para editar un paciente
+function editPatient(id) {
+    const patient = pacientes.find(p => p.id === id);
+    if (patient) {
+        document.getElementById('id').value = patient.id;
+        document.getElementById('codigousuario').value = patient.codigousuario;
+        document.getElementById('nombre').value = patient.nombre;
+        document.getElementById('apellidos').value = patient.apellidos;
+        document.getElementById('fecha_nacimiento').value = patient.fecha_nacimiento;
+        document.getElementById('direccion').value = patient.direccion;
+        document.getElementById('telefono').value = patient.telefono;
+        document.getElementById('password').value = patient.password; 
+        document.getElementById('genero').value = patient.genero;
+        document.getElementById('identificacion').value = patient.identificacion; 
+        document.getElementById('profesion').value = patient.profesion;
+        document.getElementById('contacto_emergencia').value = patient.contacto_emergencia; 
+        document.getElementById('enfermedades_cronicas').value = patient.enfermedades_cronicas;
+        document.getElementById('alergias').value = patient.alergias;
+        document.getElementById('medicacion_actual').value = patient.medicacion_actual;
+        document.getElementById('problemas_mentales').value = patient.problemas_mentales;
+        document.getElementById('operaciones_previas').value = patient.operaciones_previas;
+        document.getElementById('religion').value = patient.religion; 
+        document.getElementById('antecedentes_familiares').value = patient.antecedentes_familiares;
+        document.getElementById('peso').value = patient.peso;
+
+        document.querySelector('#formulario-paciente input[name="tabaquismo"]').checked = patient.tabaquismo;
+        document.querySelector('#formulario-paciente input[name="alcoholismo"]').checked = patient.alcoholismo;
+        document.querySelector('#formulario-paciente input[name="actividad_fisica"]').checked = patient.actividad_fisica;
+        document.querySelector('#formulario-paciente input[name="dieta"]').checked = patient.dieta;
+
+        const idPacienteCita = document.getElementById('idPaciente');
+        if(idPacienteCita) idPacienteCita.value = patient.id;
+    }
+}
+
+// Función para eliminar un paciente (USANDO EL MODAL PERSONALIZADO)
+function deletePatient(id) {
+    showConfirmModal('¿Estás seguro de que quieres eliminar este paciente? Se eliminarán también sus citas, exámenes y diagnósticos/tratamientos asociados.', () => {
+        // Lógica de eliminación
+        pacientes = pacientes.filter(p => p.id !== id);
+        localStorage.setItem('pacientes', JSON.stringify(pacientes));
+
+        citas = citas.filter(cita => cita.idPaciente !== id);
+        localStorage.setItem('citas', JSON.stringify(citas));
+
+        examenes = examenes.filter(examen => examen.pacienteId !== id);
+        localStorage.setItem('examenes', JSON.stringify(examenes));
+
+        diagnosticosTratamientos = diagnosticosTratamientos.filter(dt => dt.patientId !== id);
+        localStorage.setItem('diagnosticosTratamientos', JSON.stringify(diagnosticosTratamientos));
+
+        showAlertModal('Paciente y datos asociados eliminados correctamente.', 'Eliminación Exitosa');
+        mostrarPacientes(); // Re-renderizar tabla de pacientes
+        mostrarCitas(); // Re-renderizar tabla de citas
+        if (calendar) {
+            calendar.refetchEvents(); // Actualizar eventos en el calendario
+        }
+
+        const currentSearchPatientIdElement = document.getElementById('searchPatientId');
+        if (currentSearchPatientIdElement && parseInt(currentSearchPatientIdElement.value) === id) {
+            currentSearchPatientIdElement.value = '';
+            loadPatientHistory(); // Limpiar y recargar historial si era el paciente eliminado
+        }
+        displayPatientPendingAppointments(); // Actualizar citas pendientes del paciente
+    }, () => {
+        console.log("Eliminación de paciente cancelada.");
+        showAlertModal("Eliminación de paciente cancelada.", "Cancelado");
+    });
+}
+
+// ****************************************************************************************************
+// Módulo de Gestión de Citas
+// ****************************************************************************************************
+
+// Mapeo de especialidades a doctores
+const doctoresPorEspecialidad = {
+    "Cardiólogo": ["Dr. Juan Pérez", "Dra. Ana Gómez", "Dr. Valentín Fuster", "Dr. Josep Brugada", "Dr. Christiaan Barnard"],
+    "Endocrinólogo": ["Dr. Luis Martínez", "Dra. Sofía Heredia", "Dr. César Lozano Peña"],
+    "Oncólogo": ["Dr. Carlos Ramírez", "Dra. Laura Benítez", "Dr. Javier Cortés Castán"],
+    "Gastroenterólogo": ["Dr. Pedro Sánchez", "Dra. Marta Díaz", "Dr. Vipulroy Rathod", "Dr. Henry Cohen"],
+    "Pediatra": ["Dr. Jorge Castro", "Dra. Elena Ruiz", "Dra. Lucía Galán Bertrand", "Dr. Fernando Cabañas González"],
+    "Cirujano Maxilofacial": ["Dr. Javier Solís", "Dra. Patricia Mora", "Dr. Julio Acero Sanz"],
+    "Psiquiatra": ["Dr. Ricardo Blanco", "Dra. Verónica Salas", "Dr. Sigmund Freud"],
+    "Nutricionista": ["Lic. Andrea Vega", "Lic. Francisco Soto", "Dr. Carlos Ríos", "Dra. Gabriela Uriarte", "Dr. Aitor Sánchez", "Dra. Blanca García Orea"],
+    "Neurocirujano": ["Dr. Miguel Ángel", "Dr. Piño Manuel Martínez Curdielo", "Dr. Bartolomé Oliver", "Dr. Keith Black"],
+    "Dermatólogo": ["Dra. Isabel Fuentes", "Dr. Esteban Bravo", "Dr. Gerardo Martín"],
+    "Gineco Obstetra": ["Dra. Fernanda Rojas", "Dr. Roberto Durán", "Dra. María Guadalupe Hernandez Juárez", "Dr. Arturo López Monsalvo", "Dra. Verónica Aguilar Hidalgo"],
+    "Traumatólogo": ["Dr. Fernando Torres", "Dra. Carmen Vargas", "Dr. Ramón Cugat", "Dr. Fernando Álvarez", "Dr. Emilio Calvo Crespo", "Dr. Manuel Monteagudo de la Rosa", "Dr. Pedro Guillén"],
+    "Anestesista": ["Dra. Silvia Quesada", "Dr. David Montero", "Dr. Humberto Sainz Cabrera", "Dr. Pío Manuel Martínez Curbelo", "Dr. William TG Morton", "Dr. Luis Cabrera Guarderas", "Dr. Waldemar Badía Catalá", "Dr. Felipe Olivari Sáez"],
+    "Médico General": ["Dr. Marco Tulio", "Dra. Alba Mora", "Dra. Sara Gabriela", "Dra. Eileen Tercero", "Dr. Mario Fargas", "Dr. David Torrez", "Dr. Edward Jenner", "Dr. Elizabeth Blackwell", "Dr. Galeno", "Dr. Hipócrates"]
+};
+
+const especialidadCitaSelect = document.getElementById('especialidadCita');
+const doctorCitaSelect = document.getElementById('doctorCita');
+
+// Listener para actualizar doctores al cambiar la especialidad
+if(especialidadCitaSelect && doctorCitaSelect) {
+    especialidadCitaSelect.addEventListener('change', () => {
+        const selectedEspecialidad = especialidadCitaSelect.value;
+        doctorCitaSelect.innerHTML = '<option value="">Seleccione un doctor</option>';
+        if (selectedEspecialidad && doctoresPorEspecialidad[selectedEspecialidad]) {
+            doctoresPorEspecialidad[selectedEspecialidad].forEach(doctor => {
+                const option = document.createElement('option');
+                option.value = doctor;
+                option.textContent = doctor;
+                doctorCitaSelect.appendChild(option);
+            });
+        }
+    });
+}
+
+class Cita {
+    constructor(idInterno, idPaciente, numeroCita, fechaRegistro, motivo, especialidad, doctor, estado, observaciones) {
+        this.idInterno = idInterno;
+        this.idPaciente = idPaciente;
+        this.numeroCita = numeroCita;
+        this.fechaRegistro = fechaRegistro;
+        this.motivo = motivo;
+        this.especialidad = especialidad;
+        this.doctor = doctor;
+        this.estado = estado;
+        this.observaciones = observaciones;
+    }
+}
+
+// Función para generar un nuevo número de cita
+function updateCitaNumberField() {
+    const numeroCitaInput = document.getElementById('numeroCita');
+    if (numeroCitaInput) {
+        numeroCitaInput.value = nextCitaNumber;
+    }
+}
+
+// Función para guardar citas
+const formularioCita = document.getElementById('formulario-cita');
+if(formularioCita) {
+    formularioCita.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const idPaciente = parseInt(document.getElementById('idPaciente').value); // ID paciente manual
+        const numeroCita = parseInt(document.getElementById('numeroCita').value);
+        const fechaRegistro = document.getElementById('fechaRegistro').value;
+        const motivo = document.getElementById('motivo').value;
+        const especialidad = document.getElementById('especialidadCita').value;
+        const doctor = document.getElementById('doctorCita').value;
+        const estado = document.getElementById('estado').value;
+        const observaciones = document.getElementById('observaciones').value;
+
+        if (!idPaciente || !fechaRegistro || !motivo || !especialidad || !doctor || !estado) {
+            showAlertModal("Por favor, complete todos los campos obligatorios de la cita.", "Campos Faltantes");
+            return;
+        }
+
+        const pacienteExiste = pacientes.some(p => p.id === idPaciente);
+        if (!pacienteExiste) {
+            showAlertModal("El ID de paciente no existe. Por favor, registre al paciente primero.", "Paciente No Encontrado");
+            return;
+        }
+
+        const citaData = {
+            idInterno: `cita-${Date.now()}`, // Usar un ID interno único basado en el tiempo
+            idPaciente: idPaciente,
+            numeroCita: numeroCita,
+            fechaRegistro: fechaRegistro,
+            motivo: motivo,
+            especialidad: especialidad,
+            doctor: doctor,
+            estado: estado,
+            observaciones: observaciones
+        };
+
+        const citaIndex = citas.findIndex(c => c.numeroCita === numeroCita);
+
+        if (citaIndex > -1) {
+            citas[citaIndex] = citaData;
+            showAlertModal('Cita actualizada correctamente.', 'Actualización Exitosa');
+        } else {
+            citas.push(citaData);
+            nextCitaNumber++;
+            showAlertModal('Cita guardada correctamente.', 'Cita Agregada');
+        }
+
+        localStorage.setItem('citas', JSON.stringify(citas));
+        localStorage.setItem('nextCitaNumber', nextCitaNumber);
+
+        this.reset();
+        updateCitaNumberField();
+        mostrarCitas();
+        if (calendar) {
+            calendar.refetchEvents(); // Actualizar eventos en el calendario
+        }
+        displayPatientPendingAppointments(); // Actualizar citas pendientes del paciente
+    });
+}
+
+// Función para mostrar citas en la tabla (ADMIN)
+function mostrarCitas() {
+    const citasLista = document.getElementById('citas-lista');
+    if (!citasLista) return;
+
+    citasLista.innerHTML = '';
+
+    if (citas.length === 0) {
+        citasLista.innerHTML = '<tr><td colspan="9" style="text-align: center;">No hay citas registradas.</td></tr>';
+    }
+
+    citas.forEach(cita => {
