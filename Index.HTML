@@ -158,3 +158,165 @@
                 <div class="imagen-opcion">
                     <img src="Imagenes/gestion-de-proyectos.png" alt="Gestionas tus citas">
                 </div>
+             </div>
+            <div class="opcion">
+                <div class="texto-opcion">
+                    <h3>Consultas hasta la puerta de tu casa</h3>
+                    <p>Podrás solicitar tu cita con nuestros médicos especialistas y si así lo desea se hará la consulta desde cualquier lugar o en línea.</p>
+                </div>
+                <div class="imagen-opcion">
+                    <img src="Imagenes/casa-inteligente.png" alt="Consultas a domicilio">
+                </div>
+            </div>
+            <div class="opcion">
+                <div class="texto-opcion">
+                    <h3>Recibirás consejos de salud</h3>
+                    <p>Nos adaptamos a tu perfil y estilo de vida, serán consejos y recomendaciones de salud para que sigas pautas y estés informado de revisiones médicas periódicas.</p>
+                </div>
+                <div class="imagen-opcion">
+                    <img src="Imagenes/estilo-de-vida-saludable.png" alt="Consejos de salud">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonios-section">
+        <h2>Testimonios</h2>
+        <div class="testimonios-container">
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <img src="Imagenes/testimonio1.jpg" alt="María Fernanda López" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                    <div class="flip-card-back">
+                        <p class="rol-testimonio">paciente con historial crónico</p>
+                        <p>Desde que empecé mi tratamiento en Vitalis Tech, todo ha cambiado para bien. Antes solía perder citas o repetir estudios porque nadie llevaba bien mi historial, pero aquí todo está digitalizado y actualizado. Me sorprendió mucho la rapidez con la que accedieron a mis resultados de laboratorio y cómo el doctor ya sabía mi historial incluso antes de entrar a consulta. El ambiente es moderno pero cálido, y el personal médico me trató con una empatía que no se ve en muchos lugares. Es evidente que están bien organizados. Me sentí escuchada y segura en cada etapa de mi atención. 100% recomendable.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <img src="Imagenes/Testimono2.jpg" alt="Camila Torres" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                    <div class="flip-card-back">
+                        <p class="rol-testimonio">primera consulta</p>
+                        <p>Me recomendaron Vitalis Tech para hacerme un chequeo general, y fue una experiencia excelente. Primero, el centro está muy limpio y moderno, y el personal de recepción fue muy amable explicándome todo paso a paso. Me hicieron los exámenes en la misma clínica y al día siguiente ya estaban disponibles en el sistema para la doctora. Lo que más me gustó fue que la doctora me explicó todo con calma usando gráficas en una pantalla, y me dio un seguimiento preventivo muy personalizado. Me sentí tratada como persona, no como un número. Además, el seguimiento por mensajes fue muy atento. ¡Gracias por hacer que ir al médico no sea una tortura!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <img src="Imagenes/testimonio3.jpg" alt="Valeria Mendoza" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                    <div class="flip-card-back">
+                        <p class="rol-testimonio">paciente en chequeo de rutina</p>
+                        <p>Fui por un chequeo general porque tenía tiempo sin visitar un médico, y sinceramente quedé encantada. Vitalis Tech no solo es moderno, ¡es eficiente! Me sorprendió que todo el proceso fue sin filas, sin papeleos y con una atención al detalle increíble. Me atendieron puntualmente y lo que más me sorprendió fue cómo integran todo: desde el historial clínico hasta los exámenes de laboratorio, todo lo tienen digitalizado. No tuve que andar cargando papeles.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="registro-paciente-section" class="registro-paciente admin-only">
+        <div class="container">
+            <h1>Registro de Paciente</h1>
+            <form id="formulario-paciente">
+                <label for="id">ID del Paciente (Automático):</label>
+                <input type="text" id="id" name="id" readonly class="readonly-field" />
+
+                <label for="codigousuario">Cree su código de usuario</label>
+                <input type="text" id="codigousuario" name="codigousuario" required class="editable-field">
+
+                <label for="nombre">Nombres</label>
+                <input type="text" id="nombre" name="nombre" required class="editable-field" />
+
+                <label for="apellidos">Apellidos</label>
+                <input type="text" id="apellidos" name="apellidos" required class="editable-field" />
+
+                <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required class="editable-field" />
+
+                <label for="direccion">Dirección</label>
+                <input type="text" id="direccion" name="direccion" required class="editable-field" />
+
+                <label for="telefono">Teléfono</label>
+                <input type="tel" id="telefono" name="telefono" required class="editable-field" />
+                
+                <label for="password">Contraseña (para pacientes):</label>
+                <input type="password" id="password" name="password" required class="editable-field">
+
+                <label for="genero">Género</label>
+                <select id="genero" name="genero" required class="editable-field">
+                    <option value="">Seleccione</option>
+                    <option value="Femenino">Femenino</option>
+                    <option value="Masculino">Masculino</option>
+                    </select>
+
+                <label for="identificacion">Número de Identificación (opcional)</label>
+                <input type="text" id="identificacion" name="identificacion" class="editable-field" />
+
+                <label for="profesion">Profesión u Ocupación (opcional)</label>
+                <input type="text" id="profesion" name="profesion" class="editable-field" />
+
+                <label for="contacto_emergencia">Contacto de Emergencia(opcional)</label>
+                <input type="tel" id="contacto_emergencia" name="contacto_emergencia" class="editable-field" />
+
+                <label for="enfermedades_cronicas">Enfermedades Crónicas(opcional)</label>
+                <textarea id="enfermedades_cronicas" name="enfermedades_cronicas" class="editable-field"></textarea>
+
+                <label for="alergias">Alergias(opcional)</label>
+                <textarea id="alergias" name="alergias" class="editable-field"></textarea>
+
+                <label for="medicacion_actual">Medicación Actual(opcional)</label>
+                <textarea id="medicacion_actual" name="medicacion_actual" class="editable-field"></textarea>
+
+                <label for="problemas_mentales">Problemas Mentales(opcional)</label>
+                <textarea id="problemas_mentales" name="problemas_mentales" class="editable-field"></textarea>
+
+                <label for="operaciones_previas">Operaciones Previas(opcional)</label>
+                <textarea id="operaciones_previas" name="operaciones_previas" class="editable-field"></textarea>
+
+                <label for="religion">Religión(opcional)</label>
+                <input type="text" id="religion" name="religion" class="editable-field" />
+
+                <label for="antecedentes_familiares">Antecedentes Familiares(opcional)</label>
+                <textarea id="antecedentes_familiares" name="antecedentes_familiares" class="editable-field"></textarea>
+
+                <label for="peso">Peso (Libras)</label>
+                <input type="number" id="peso" name="peso" step="0.1" class="editable-field" />
+
+                <fieldset>
+                    <legend>Hábitos</legend>
+                    <label><input type="checkbox" name="tabaquismo" class="editable-field" /> Tabaquismo</label>
+                    <label><input type="checkbox" name="alcoholismo" class="editable-field" /> Alcoholismo</label>
+                    <label><input type="checkbox" name="actividad_fisica" class="editable-field" /> Realiza actividad Física</label>
+                    <label><input type="checkbox" name="dieta" class="editable-field" />Sigue una Dieta</label>
+                </fieldset>
+
+                <button type="submit" id="savePatientButton">Guardar</button>
+            </form>
+        </div>
+
+        <div class="table-responsive patient-table-container admin-only">
+            <h3>Lista de Pacientes Registrados</h3>
+            <div class="search-patient-container">
+                <input type="text" id="patientSearchInput" placeholder="Buscar paciente por ID, Codigo de usuario, nombres, apellidos o numero de telefono" />
+                <button class="btn-primary" onclick="searchPatients()">Buscar</button>
+            </div>
+            <table id="tabla-pacientes">
+                <thead>
+                    <tr>
+                        <th>ID Paciente</th>
+                        <th>Código Usuario</th>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Fecha Nac.</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                        <th>Género</th>
+                        <th>Acción</th> </tr>
+                </thead>
