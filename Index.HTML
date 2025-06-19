@@ -320,3 +320,326 @@
                         <th>Género</th>
                         <th>Acción</th> </tr>
                 </thead>
+                 <tbody id="pacientes-lista">
+                    </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="patient-appointments-section" class="module patient-only hidden">
+        <h2>Citas registradas</h2>
+        <div class="notification-message">
+            Se le notificará de la cita mediante su teléfono unos días antes de la cita y unas horas antes de la cita 🔔.
+        </div>
+        <div class="table-responsive">
+            <table id="tabla-mis-citas">
+                <thead>
+                    <tr>
+                        <th>ID Paciente</th>
+                        <th>N° Cita</th>
+                        <th>Fecha</th>
+                        <th>Motivo</th>
+                        <th>Especialidad</th>
+                        <th>Doctor</th>
+                        <th>Estado</th>
+                        <th>Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody id="mis-citas-lista">
+                    </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="gestion-citas-section" style="margin-top: 3rem;" class="admin-only">
+        <h2>Gestión de Citas</h2>
+
+        <div class="calendar-and-form-container">
+            <div id="calendar" style="width: 70%; margin-right: 20px;"></div>
+            <form id="formulario-cita">
+                <label for="idPaciente">ID Paciente:</label>
+                <input type="text" id="idPaciente" name="idPaciente" placeholder="ID Paciente" required class="editable-field" /> <label for="numeroCita">Número de Cita:</label>
+                <input type="text" id="numeroCita" name="numeroCita" placeholder="Número de Cita" required readonly class="readonly-field" />
+                
+                <label for="fechaRegistro">Fecha de la Cita:</label>
+                <input type="date" id="fechaRegistro" name="fechaRegistro" required class="editable-field" />
+                            
+                <label for="motivo">Motivo de la Cita:</label>
+                <textarea id="motivo" name="motivo" placeholder="Motivo" required class="editable-field"></textarea>
+                
+                <label for="especialidadCita">Especialidad:</label>
+                <select id="especialidadCita" name="especialidadCita" required class="editable-field">
+                    <option value="">Seleccione una especialidad</option>
+                    <option value="Cardiólogo">Cardiólogo</option>
+                    <option value="Endocrinólogo">Endocrinólogo</option>
+                    <option value="Oncólogo">Oncólogo</option>
+                    <option value="Gastroenterólogo">Gastroenterólogo</option>
+                    <option value="Pediatra">Pediatra</option>
+                    <option value="Cirujano Maxilofacial">Cirujano Maxilofacial</option>
+                    <option value="Psiquiatra">Psiquiatra</option>
+                    <option value="Nutricionista">Nutricionista</option>
+                    <option value="Neurocirujano">Neurocirujano</option>
+                    <option value="Dermatólogo">Dermatólogo</option>
+                    <option value="Gineco Obstetra">Gineco Obstetra</option>
+                    <option value="Traumatólogo">Traumatólogo</option>
+                    <option value="Anestesista">Anestesista</option>
+                    <option value="Médico General">Médico General</option>
+                </select>
+
+                <label for="doctorCita">Doctor:</label>
+                <select id="doctorCita" name="doctorCita" required class="editable-field">
+                    <option value="">Seleccione un doctor</option>
+                </select>
+
+                <label for="estado">Estado:</label>
+                <select id="estado" name="estado" required class="editable-field">
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Confirmada">Confirmada</option>
+                    <option value="Realizada">Realizada</option>
+                    <option value="Cancelada">Cancelada</option>
+                </select>
+                <label for="observaciones">Observaciones:</label>
+                <textarea id="observaciones" name="observaciones" placeholder="Observaciones" class="editable-field"></textarea>
+                <button type="submit" id="addCitaButton">Agregar Cita</button>
+            </form>
+        </div>
+
+        <div class="table-responsive">
+            <table id="tabla-citas">
+                <thead>
+                    <tr>
+                        <th>ID Paciente</th>
+                        <th>N° Cita</th>
+                        <th>Fecha</th>
+                        <th>Motivo</th>
+                        <th>Especialidad</th>
+                        <th>Doctor</th>
+                        <th>Estado</th>
+                        <th>Observaciones</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="citas-lista"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="resultados-examenes-section" class="module admin-only">
+        <h2>Resultados de Exámenes</h2>
+        <form id="form-resultados-examenes">
+            <fieldset>
+                <legend>Datos del Examen</legend>
+
+                <div class="form-group">
+                    <label for="examenPacienteId">ID del Paciente:</label>
+                    <input type="text" id="examenPacienteId" name="examenPacienteId" placeholder="ID Paciente" required class="editable-field">
+                </div>
+
+                <div class="form-group">
+                    <label for="numExamen">Número de Examen:</label>
+                    <input type="text" id="numExamen" name="numExamen" placeholder="Ej. 987654" required readonly class="readonly-field">
+                </div>
+
+                <div class="form-group">
+                    <label for="fechaRealizacion">Fecha de Realización:</label>
+                    <input type="date" id="fechaRealizacion" name="fechaRealizacion" required class="editable-field">
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcionExamen">Descripción:</label>
+                    <textarea id="descripcionExamen" name="descripcionExamen" placeholder="Descripción del examen..." class="editable-field"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="estadoExamen">Estado:</label>
+                    <select id="estadoExamen" name="estadoExamen" class="editable-field">
+                        <option value="">Seleccionar</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Completado">Completado</option>
+                        <option value="Anulado">Anulado</option>
+                    </select>
+                </div>
+            </fieldset>
+
+            <hr>
+
+            <fieldset>
+                <legend>Detalle del Examen</legend>
+                <div class="form-group">
+                    <label for="tipoExamen">Tipo de Examen:</label>
+                    <select id="tipoExamen" name="tipoExamen" class="editable-field">
+                        <option value="">Seleccionar</option>
+                        <option value="sangre">Sangre</option>
+                        <option value="orina">Orina</option>
+                        <option value="heces">Heces</option>
+                        <option value="otro">Electrocardiograma</option>
+                        <option value="sangre">Ecocardiograma</option>
+                        <option value="sangre">Glucosa</option>
+                        <option value="sangre">Prolactina</option>
+                        <option value="sangre">Biopsia</option>
+                        <option value="sangre">Tomografia</option>
+                        <option value="sangre">Hemograma completo</option>
+                        <option value="sangre">Endoscopia</option>
+                        <option value="sangre">Ecografia</option>
+                        <option value="sangre">Colonoscopia</option>
+                        <option value="sangre">Dermatoscopia</option>
+                        <option value="sangre">Perfil hormonal</option>
+                        <option value="sangre">Entrevista Psiquiatra</option>
+                        <option value="sangre">Radiografia Panoramica</option>
+                        <option value="sangre">Perfil lipidico</option>
+                        <option value="sangre">Resonancia magnetica cerebral</option>
+                        <option value="sangre">Electroencefalograma</option>
+                        <option value="sangre">Papanicolau</option>
+                        <option value="sangre">Gasometria arterial</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+
+                 <div class="form-group">
+                    <label for="valor">Valor:</label>
+                    <input type="text" id="valor" name="valor" class="editable-field">
+                </div>
+
+                <div class="form-group">
+                    <label for="unidad">Unidad:</label>
+                    <input type="text" id="unidad" name="unidad" class="editable-field">
+                </div>
+
+                <div class="form-group">
+                    <label for="rangoNormal">Rango Normal:</label>
+                    <input type="text" id="rangoNormal" name="rangoNormal" class="editable-field">
+                </div>
+
+                <div class="form-group">
+                    <label for="observacionesDetalle">Observaciones:</label>
+                    <textarea id="observacionesDetalle" name="observacionesDetalle" class="editable-field"></textarea>
+                </div>
+            </fieldset>
+
+            <hr>
+
+            <fieldset>
+                <legend>Resultado Final</legend>
+                <div class="form-group">
+                    <label for="valorFinal">Valor Final:</label>
+                    <input type="text" id="valorFinal" name="valorFinal" class="editable-field">
+                </div>
+
+                <div class="form-group">
+                    <label for="interpretacion">Interpretación:</label>
+                    <textarea id="interpretacion" name="interpretacion" class="editable-field"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="fechaResultado">Fecha del Resultado:</label>
+                    <input type="date" id="fechaResultado" name="fechaResultado" class="editable-field">
+                </div>
+
+                <div class="form-group">
+                    <label for="estadoResultado">Estado:</label>
+                    <select id="estadoResultado" name="estadoResultado" class="editable-field">
+                        <option value="">Seleccionar</option>
+                        <option value="Normal">Normal</option>
+                        <option value="Anormal">Anormal</option>
+                        <option value="Pendiente">Pendiente</option>
+                    </select>
+                </div>
+                <input type="hidden" id="indicadorId" name="indicadorId" value="101">
+            </fieldset>
+
+            <button type="submit" class="btn-primary" id="saveExamenButton">Guardar Examen</button>
+        </form>
+    </section>
+
+    <section id="historial-clinico-section" class="module historial-module">
+        <h2>Historial Clínico del Paciente</h2>
+        <div class="form-group">
+            <label for="searchPatientId">Buscar por ID de Paciente:</label>
+            <input type="text" id="searchPatientId" placeholder="Ingrese ID o Código de usuario del paciente" />
+            <button class="btn-primary" onclick="loadPatientHistory()">Buscar Historial</button>
+        </div>
+
+        <div id="patient-history-display" class="patient-history-display">
+            <div class="summary-section">
+                <h3>Resumen del Paciente</h3>
+                <div id="patient-summary-text-content">
+                    <p class="placeholder-text">Seleccione un paciente para ver su resumen.</p>
+                </div>
+            </div>
+
+            <div class="history-sections">
+                <div class="antecedentes-section">
+                    <h3>Antecedentes Médicos</h3>
+                    <div id="antecedentes-content">
+                        <p class="placeholder-text">No hay antecedentes registrados para este paciente.</p>
+                    </div>
+                </div>
+
+                <div class="citas-section">
+                    <h3>Consultas y Citas</h3>
+                    <div id="citas-history-content">
+                        <p class="placeholder-text">No hay citas registradas para este paciente.</p>
+                    </div>
+                </div>
+
+                <div class="examenes-section">
+                    <h3>Resultados de Exámenes</h3>
+                    <div id="examenes-history-content">
+                        <p class="placeholder-text">No hay resultados de exámenes para este paciente.</p>
+                    </div>
+                </div>
+
+                <div class="diagnosticos-tratamientos-section">
+                    <h3>Diagnósticos y Tratamientos</h3>
+                    <form id="form-diagnostico-tratamiento" class="admin-only-form">
+                        <input type="hidden" id="dtPatientId" />
+                        <label for="dtFecha">Fecha:</label>
+                        <input type="date" id="dtFecha" required class="editable-field" />
+                        <label for="dtDiagnostico">Diagnóstico:</label>
+                        <textarea id="dtDiagnostico" placeholder="Ingrese el diagnóstico" required class="editable-field"></textarea>
+                        <label for="dtTratamiento">Tratamiento/Procedimiento:</label>
+                        <textarea id="dtTratamiento" placeholder="Ingrese el tratamiento o procedimiento a seguir" required class="editable-field"></textarea>
+                        <button type="submit" class="btn-secondary" id="addDtButton">Agregar Diagnóstico/Tratamiento</button>
+                    </form>
+                    <div id="diagnosticos-tratamientos-list">
+                        <p class="placeholder-text">No hay diagnósticos o tratamientos registrados.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="download-history-section">
+                <img src="Imagenes/descargar-archivo.png" alt="Descargar" class="download-icon" onclick="openDownloadModal()">
+                <h3>Descarga de tu historial clínico</h3>
+                <button class="btn-primary" onclick="openDownloadModal()">Descargar Historial Clínico</button>
+            </div>
+        </div>
+    </section>
+
+    <div id="downloadHistoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDownloadModal()">&times;</span>
+            <h2>Descargar Historial Clínico</h2>
+            <p>Seleccione el formato de imagen para descargar el historial del paciente actual:</p>
+            <div class="download-options">
+                <button class="btn-primary" onclick="captureAndDownloadHistory('png')">Descargar como PNG</button>
+                <button class="btn-primary" onclick="captureAndDownloadHistory('jpeg')">Descargar como JPEG</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="vitalis-footer">
+        <div class="footer-bg footer-bg1"></div>
+        <div class="footer-bg footer-bg2"></div>
+        <div class="footer-bg footer-bg3"></div>
+        <div class="footer-content">
+            <p>&copy; 2025 Vitalis Tech. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script> 
+    <script src="scripts.js"></script>
+
+</body>
+</html>
