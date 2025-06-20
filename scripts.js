@@ -817,3 +817,412 @@ function mostrarCitas() {
     }
 
     citas.forEach(cita => {
+          const row = citasLista.insertRow();
+        row.innerHTML = `
+            <td data-label="ID Paciente">${cita.idPaciente}</td>
+            <td data-label="N° Cita">${cita.numeroCita}</td>
+            <td data-label="Fecha">${cita.fechaRegistro}</td>
+            <td data-label="Motivo">${cita.motivo}</td>
+            <td data-label="Especialidad">${cita.especialidad}</td>
+            <td data-label="Doctor">${cita.doctor}</td>
+            <td data-label="Estado">${cita.estado}</td>
+            <td data-label="Observaciones">${cita.observaciones}</td>
+            <td data-label="Acción">
+                <button class="btn-danger btn-delete-cita" onclick="deleteCita(${cita.numeroCita})">Eliminar</button>
+            </td>
+        `;
+    });
+    updateUIForRole(); 
+}
+
+// Función para mostrar citas pendientes para el PACIENTE
+function displayPatientPendingAppointments() {
+    const misCitasLista = document.getElementById('mis-citas-lista');
+    if (!misCitasLista || currentUserRole !== ROLES.PATIENT || currentLoggedInPatientId === null) {
+        if (misCitasLista) misCitasLista.innerHTML = '<tr><td colspan="8" style="text-align: center;">Inicie sesión para ver sus citas.</td></tr>';
+        return;
+    }
+
+    misCitasLista.innerHTML = '';
+
+    // Filtrar citas pendientes para el paciente logueado
+    const patientPendingCitas = citas.filter(cita => 
+        cita.idPaciente === currentLoggedInPatientId
+    );
+
+    if (patientPendingCitas.length === 0) {
+        misCitasLista.innerHTML = '<tr><td colspan="8" style="text-align: center;">No tienes citas registradas.</td></tr>';
+    } else {
+        patientPendingCitas.forEach(cita => {
+            const row = misCitasLista.insertRow();
+            row.innerHTML = `
+                <td data-label="ID Paciente">${cita.idPaciente}</td>
+                <td data-label="N° Cita">${cita.numeroCita}</td>
+                <td data-label="Fecha">${cita.fechaRegistro}</td>
+                <td data-label="Motivo">${cita.motivo}</td>
+                <td data-label="Especialidad">${cita.especialidad}</td>
+                <td data-label="Doctor">${cita.doctor}</td>
+                <td data-label="Estado">${cita.estado}</td>
+                <td data-label="Observaciones">${cita.observaciones}</td>
+            `;
+            misCitasLista.appendChild(row); 
+        });
+    }
+}
+
+// Función para eliminar citas 
+function deleteCita(numeroCita) {
+    showConfirmModal('¿Estás seguro de que quieres eliminar esta cita?', () => {
+        citas = citas.filter(cita => cita.numeroCita !== numeroCita);
+        localStorage.setItem('citas', JSON.stringify(citas));
+        showAlertModal('Cita eliminada correctamente.', 'Eliminación Exitosa');
+        mostrarCitas();
+        if (calendar) {
+            calendar.refetchEvents();
+        }
+        displayPatientPendingAppointments(); 
+    }, () => {
+        console.log("Eliminación de cita cancelada.");
+        showAlertModal("Eliminación de cita cancelada.", "Cancelado");
+    });
+}
+
+// ****************************************************************************************************
+// Módulo de Resultados de Exámenes
+// ****************************************************************************************************
+
+class Examen {
+    constructor(id, pacienteId, num_examen, fecha_realizacion, descripcion, estado_examen_general, detalle, resultado, indicadorId) {
+        this.id = id;
+        this.pacienteId = pacienteId;
+        this.num_examen = num_examen;
+        this.fecha_realizacion = fecha_realizacion;
+        this.descripcion = descripcion;
+        this.estado_examen_general = estado_examen_general;
+        this.detalle = detalle;
+        this.resultado = resultado;
+        this.indicadorId = indicadorId;
+    }
+}
+
+function updateExamenNumberField() {
+    const numExamenInput = document.getElementById('numExamen');
+    if (numExamenInput) {
+        numExamenInput.value = nextExamenNumber;
+    }
+}
+
+const formResultadosExamenes = document.getElementById('form-resultados-examenes');
+if(formResultadosExamenes) {
+    formResultadosExamenes.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const pacienteId = parseInt(document.getElementById('examenPacienteId').value);
+        const num_examen = document.getElementById('numExamen').value;
+        const fecha_realizacion = document.getElementById('fechaRealizacion').value;
+        const descripcion = document.getElementById('descripcionExamen').value;
+        const estado_examen_general = document.getElementById('estadoExamen').value;
+
+        const tipo_examen = document.getElementById('tipoExamen').value;
+        const valor = document.getElementById('valor').value;
+        const unidad = document.getElementById('unidad').value;
+        const rango_normal = document.getElementById('rangoNormal').value;
+        const observaciones_detalle = document.getElementById('observacionesDetalle').value;
+
+        const valor_final = document.getElementById('valorFinal').value;
+        const interpretacion = document.getElementById('interpretacion').value;
+        const fecha_resultado = document.getElementById('fechaResultado').value;
+        const estado_resultado_final = document.getElementById('estadoResultado').value;
+        const indicadorId = document.getElementById('indicadorId').value;
+
+        if (!pacienteId || !num_examen || !fecha_realizacion || !tipo_examen) {
+            showAlertModal('Por favor, complete al menos los campos obligatorios del examen (ID Paciente, Número de Examen, Fecha de Realización, Tipo de Examen).', 'Campos Faltantes');
+            return;
+        }
+
+        const pacienteExiste = pacientes.some(p => p.id === pacienteId);
+        if (!pacienteExiste) {
+            showAlertModal("El ID de paciente no existe. Por favor, registre al paciente primero.", "Paciente No Encontrado");
+            return;
+        }
+
+        const examenData = new Examen(
+            num_examen, 
+            pacienteId,
+            num_examen,
+            fecha_realizacion,
+            descripcion,
+            estado_examen_general,
+            { tipo_examen, valor, unidad, rango_normal, observaciones: observaciones_detalle },
+            { valor_final, interpretacion, fecha_resultado, estado: estado_resultado_final },
+            indicadorId
+        );
+
+        const examenIndex = examenes.findIndex(e => e.id === examenData.id);
+
+        if (examenIndex > -1) {
+            examenes[examenIndex] = examenData;
+            showAlertModal('Examen actualizado correctamente.', 'Actualización Exitosa');
+        } else {
+            examenes.push(examenData);
+            nextExamenNumber++;
+            showAlertModal('Examen guardado correctamente.', 'Examen Guardado');
+        }
+
+        localStorage.setItem('examenes', JSON.stringify(examenes));
+        localStorage.setItem('nextExamenNumber', nextExamenNumber);
+        this.reset();
+        updateExamenNumberField();
+    });
+}
+
+// ****************************************************************************************************
+// Historial Clínico (Integración y Visualización)
+// ****************************************************************************************************
+
+class DiagnosticoTratamiento {
+    constructor(id, patientId, fecha, diagnostico, tratamiento) {
+        this.id = id;
+        this.patientId = patientId;
+        this.fecha = fecha;
+        this.diagnostico = diagnostico;
+        this.tratamiento = tratamiento;
+    }
+}
+
+// Función para cargar y mostrar diagnósticos y tratamientos para un paciente específico
+function loadDiagnosticosTratamientos(patientId) {
+    const diagnosticosTratamientosList = document.getElementById('diagnosticos-tratamientos-list');
+    if (!diagnosticosTratamientosList) return;
+
+    diagnosticosTratamientosList.innerHTML = '';
+
+    const patientDts = diagnosticosTratamientos.filter(dt => dt.patientId === patientId);
+
+    if (patientDts.length > 0) {
+        patientDts.forEach(dt => {
+            const dtItemDiv = document.createElement('div');
+            dtItemDiv.className = 'bg-white p-4 rounded-lg shadow-sm border border-gray-200'; 
+            dtItemDiv.innerHTML = `
+                <p class="mb-1"><strong>Fecha:</strong> ${dt.fecha}</p>
+                <p class="mb-1"><strong>Diagnóstico:</strong> ${dt.diagnostico}</p>
+                <p class="mb-3"><strong>Tratamiento:</strong> ${dt.tratamiento}</p>
+                <button class="btn-danger btn-delete-dt" onclick="deleteDiagnosticoTratamiento(${dt.id})">Eliminar</button>
+            `;
+            diagnosticosTratamientosList.appendChild(dtItemDiv);
+        });
+    } else {
+        diagnosticosTratamientosList.innerHTML = '<p class="placeholder-text">No hay diagnósticos o tratamientos registrados.</p>';
+    }
+    updateUIForRole(); 
+}
+
+// Función para cargar el historial de un paciente específico
+function loadPatientHistory() {
+    const searchInput = document.getElementById('searchPatientId').value;
+    let patient = null;
+
+    console.log("DEBUG: loadPatientHistory() called with searchInput:", searchInput);
+
+    // Obtener referencias a los contenedores principales
+    const patientSummaryTextContent = document.getElementById('patient-summary-text-content');
+    const antecedentesContent = document.getElementById('antecedentes-content');
+    const citasHistoryContent = document.getElementById('citas-history-content');
+    const examenesHistoryContent = document.getElementById('examenes-history-content');
+    const diagnosticosTratamientosList = document.getElementById('diagnosticos-tratamientos-list');
+    const dtPatientIdInput = document.getElementById('dtPatientId');
+
+    // Limpiar contenido previo de las secciones dinámicas
+    if (patientSummaryTextContent) patientSummaryTextContent.innerHTML = '<p class="placeholder-text">Seleccione un paciente para ver su resumen.</p>';
+    if (antecedentesContent) antecedentesContent.innerHTML = '<p class="placeholder-text">No hay antecedentes registrados para este paciente.</p>';
+    if (citasHistoryContent) citasHistoryContent.innerHTML = '<p class="placeholder-text">No hay citas registradas para este paciente.</p>';
+    if (examenesHistoryContent) examenesHistoryContent.innerHTML = '<p class="placeholder-text">No hay resultados de exámenes para este paciente.</p>';
+    if (diagnosticosTratamientosList) diagnosticosTratamientosList.innerHTML = '<p class="placeholder-text">No hay diagnósticos o tratamientos registrados.</p>';
+    if (dtPatientIdInput) dtPatientIdInput.value = '';
+
+    if (searchInput.trim() === '') {
+        if (patientSummaryTextContent) patientSummaryTextContent.innerHTML = '<p class="placeholder-text">Ingrese un ID o Código de usuario para buscar.</p>';
+        return;
+    }
+
+    if (!isNaN(parseInt(searchInput))) {
+        const patientId = parseInt(searchInput);
+        patient = pacientes.find(p => p.id === patientId);
+    } else {
+        patient = pacientes.find(p => p.codigousuario && p.codigousuario.toLowerCase() === searchInput.toLowerCase());
+    }
+
+    if (!patient) {
+        if (patientSummaryTextContent) patientSummaryTextContent.innerHTML = '<p class="placeholder-text">Paciente no encontrado o ID/Código de usuario no válido.</p>';
+        return;
+    }
+
+    console.log("DEBUG: Patient found:", patient);
+    
+    if (patientSummaryTextContent) {
+        patientSummaryTextContent.innerHTML = `
+            <p><strong>ID:</strong> ${patient.id}</p>
+            <p><strong>Código Usuario:</strong> ${patient.codigousuario}</p>
+            <p><strong>Nombre:</strong> ${patient.nombre} ${patient.apellidos}</p>
+            <p><strong>Fecha de Nacimiento:</strong> ${patient.fecha_nacimiento}</p>
+            <p><strong>Género:</strong> ${patient.genero}</p>
+            <p><strong>Teléfono:</strong> ${patient.telefono}</p>
+            <p><strong>Dirección:</strong> ${patient.direccion}</p>
+            <p><strong>Profesión:</strong> ${patient.profesion || 'N/A'}</p>
+        `;
+    }
+
+    // --- Mostrar Antecedentes Médicos ---
+    if (antecedentesContent) {
+        antecedentesContent.innerHTML = `
+            <p><strong>Enfermedades Crónicas:</strong> ${patient.enfermedades_cronicas || 'Ninguna'}</p>
+            <p><strong>Alergias:</strong> ${patient.alergias || 'Ninguna'}</p>
+            <p><strong>Medicación Actual:</strong> ${patient.medicacion_actual || 'Ninguna'}</p>
+            <p><strong>Problemas Mentales:</strong> ${patient.problemas_mentales || 'Ninguno'}</p>
+            <p><strong>Operaciones Previas:</strong> ${patient.operaciones_previas || 'Ninguna'}</p>
+            <p><strong>Antecedentes Familiares:</strong> ${patient.antecedentes_familiares || 'Ninguno'}</p>
+            <p><strong>Hábitos:</strong> ${patient.tabaquismo ? 'Tabaquismo, ' : ''}${patient.alcoholismo ? 'Alcoholismo, ' : ''}${patient.actividad_fisica ? 'Actividad Física, ' : ''}${patient.dieta ? 'Dieta Saludable' : ''}</p>
+        `;
+    }
+
+    // --- Mostrar Citas ---
+    const patientCitas = citas.filter(cita => cita.idPaciente === patient.id);
+    if (citasHistoryContent) {
+        citasHistoryContent.innerHTML = '';
+        if (patientCitas.length > 0) {
+            const ul = document.createElement('ul');
+            ul.className = 'list-disc list-inside space-y-2';
+            patientCitas.forEach(cita => {
+                const li = document.createElement('li');
+                li.className = 'bg-white p-3 rounded-md shadow-sm border border-gray-200';
+                li.innerHTML = `
+                    <strong>N° Cita:</strong> ${cita.numeroCita}, 
+                    <strong>Fecha:</strong> ${cita.fechaRegistro}, 
+                    <strong>Motivo:</strong> ${cita.motivo}, 
+                    <strong>Especialidad:</strong> ${cita.especialidad}, 
+                    <strong>Doctor:</strong> ${cita.doctor}, 
+                    <strong>Estado:</strong> ${cita.estado}
+                `;
+                ul.appendChild(li);
+            });
+            citasHistoryContent.appendChild(ul);
+        } else {
+            citasHistoryContent.innerHTML = '<p class="placeholder-text">No hay citas registradas para este paciente.</p>';
+        }
+    }
+
+    // --- Mostrar Exámenes ---
+    const patientExamenes = examenes.filter(examen => examen.pacienteId === patient.id); 
+    if (examenesHistoryContent) {
+        examenesHistoryContent.innerHTML = '';
+        if (patientExamenes.length > 0) {
+            const ul = document.createElement('ul');
+            ul.className = 'list-disc list-inside space-y-2';
+            patientExamenes.forEach(examen => {
+                const li = document.createElement('li');
+                li.className = 'bg-white p-3 rounded-md shadow-sm border border-gray-200';
+                li.innerHTML = `
+                    <strong>N° Examen:</strong> ${examen.num_examen}, 
+                    <strong>Fecha Realización:</strong> ${examen.fecha_realizacion}, 
+                    <strong>Tipo:</strong> ${examen.detalle.tipo_examen || 'N/A'}, 
+                    <strong>Valor:</strong> ${examen.detalle.valor || 'N/A'} ${examen.detalle.unidad || ''}, 
+                    <strong>Resultado:</strong> ${examen.resultado.interpretacion || 'N/A'} (${examen.resultado.estado || 'N/A'})
+                `;
+                ul.appendChild(li);
+            });
+            examenesHistoryContent.appendChild(ul);
+        } else {
+            examenesHistoryContent.innerHTML = '<p class="placeholder-text">No hay resultados de exámenes para este paciente.</p>';
+        }
+    }
+
+    if (dtPatientIdInput) dtPatientIdInput.value = patient.id;
+    loadDiagnosticosTratamientos(patient.id);
+
+    // Ajustar visibilidad de elementos dentro del historial clínico según el rol
+    const dtForm = document.getElementById('form-diagnostico-tratamiento');
+    const addDtButton = document.getElementById('addDtButton');
+    
+    const dtDeleteButtons = document.querySelectorAll('#diagnosticos-tratamientos-list .btn-delete-dt'); 
+    const downloadHistorySection = document.querySelector('.download-history-section');
+
+    if (currentUserRole === ROLES.ADMIN) {
+        if (dtForm) dtForm.classList.remove('hidden');
+        if (addDtButton) addDtButton.classList.remove('hidden');
+        dtDeleteButtons.forEach(btn => btn.classList.remove('hidden')); // Mostrar para admin
+        if (downloadHistorySection) downloadHistorySection.classList.remove('hidden');
+    } else if (currentUserRole === ROLES.PATIENT && patient.id === currentLoggedInPatientId) {
+        if (dtForm) dtForm.classList.add('hidden'); 
+        if (addDtButton) addDtButton.classList.add('hidden');
+        dtDeleteButtons.forEach(btn => btn.classList.add('hidden')); 
+        if (downloadHistorySection) downloadHistorySection.classList.remove('hidden'); // Paciente logueado puede descargar
+    } else { // GUEST o paciente logueado viendo otro historial
+        if (dtForm) dtForm.classList.add('hidden');
+        if (addDtButton) addDtButton.classList.add('hidden');
+        dtDeleteButtons.forEach(btn => btn.classList.add('hidden'));
+        if (downloadHistorySection) downloadHistorySection.classList.add('hidden'); 
+    }
+}
+
+// Listener para el formulario de Diagnósticos y Tratamientos
+const formDiagnosticoTratamiento = document.getElementById('form-diagnostico-tratamiento');
+if(formDiagnosticoTratamiento) {
+    formDiagnosticoTratamiento.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const patientId = parseInt(document.getElementById('dtPatientId').value);
+        const fecha = document.getElementById('dtFecha').value;
+        const diagnostico = document.getElementById('dtDiagnostico').value;
+        const tratamiento = document.getElementById('dtTratamiento').value;
+
+        if (isNaN(patientId) || !fecha || !diagnostico || !tratamiento) {
+            showAlertModal("Por favor, seleccione un paciente y complete todos los campos de diagnóstico/tratamiento.", "Campos Faltantes");
+            return;
+        }
+
+        const newDt = new DiagnosticoTratamiento(nextDtId++, patientId, fecha, diagnostico, tratamiento);
+
+        diagnosticosTratamientos.push(newDt);
+        localStorage.setItem('diagnosticosTratamientos', JSON.stringify(diagnosticosTratamientos));
+        localStorage.setItem('nextDtId', nextDtId);
+
+        showAlertModal('Diagnóstico/Tratamiento guardado correctamente.', "Registro Exitoso");
+        this.reset();
+        loadDiagnosticosTratamientos(patientId); 
+    });
+}
+
+// Función para eliminar un diagnóstico/tratamiento 
+function deleteDiagnosticoTratamiento(dtId) {
+    showConfirmModal('¿Estás seguro de que quieres eliminar este diagnóstico/tratamiento?', () => {
+        diagnosticosTratamientos = diagnosticosTratamientos.filter(dt => dt.id !== dtId);
+        localStorage.setItem('diagnosticosTratamientos', JSON.stringify(diagnosticosTratamientos));
+        const currentSearchPatientId = document.getElementById('searchPatientId').value;
+        if (currentSearchPatientId) {
+            loadPatientHistory(); // Recargar historial para reflejar el cambio
+        }
+        showAlertModal('Diagnóstico/Tratamiento eliminado correctamente.', 'Eliminación Exitosa');
+    }, () => {
+        console.log("Eliminación de diagnóstico/tratamiento cancelada.");
+        showAlertModal("Eliminación de diagnóstico/tratamiento cancelada.", "Cancelado");
+    });
+}
+
+// Funcionalidad de descarga del historial clínico
+function openDownloadModal() {
+    const patientId = document.getElementById('searchPatientId').value;
+    if (!patientId || (isNaN(parseInt(patientId)) && patientId.trim() === '')) {
+        showAlertModal("Por favor, busque un historial de paciente primero antes de intentar descargar.", "Error de Operación");
+        return;
+    }
+    const downloadModal = document.getElementById('downloadHistoryModal');
+    if (downloadModal) {
+        downloadModal.style.display = 'flex';
+    }
+}
+
+function closeDownloadModal() {
+    const downloadModal = document.getElementById('downloadHistoryModal');
+    if (downloadModal) {
+        downloadModal.style.display = 'none';
+    }
+}
