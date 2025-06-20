@@ -1226,3 +1226,411 @@ function closeDownloadModal() {
         downloadModal.style.display = 'none';
     }
 }
+
+function downloadPatientHistory() {
+    openDownloadModal();
+}
+
+function captureAndDownloadHistory(format) {
+    const patientHistoryDisplay = document.getElementById('patient-history-display');
+    const searchPatientIdElement = document.getElementById('searchPatientId');
+    const patientId = searchPatientIdElement ? searchPatientIdElement.value : '';
+
+    if (!patientHistoryDisplay || !patientId || (isNaN(parseInt(patientId)) && patientId.trim() === '')) {
+        showAlertModal("Error: No se encontró el historial del paciente para descargar.", "Error de Descarga");
+        return;
+    }
+
+    closeDownloadModal();
+
+    // Ocultar elementos que no deben aparecer en la captura
+    const elementsToHide = patientHistoryDisplay.querySelectorAll('.btn-delete-dt, .btn-secondary, .download-history-section button, .download-icon, form button[type="submit"]');
+    elementsToHide.forEach(el => el.style.display = 'none');
+
+    // Temporalmente ajustar el scroll para asegurar que todo el contenido es visible para html2canvas
+    const originalScrollY = window.scrollY;
+    const originalBodyOverflow = document.body.style.overflow;
+    
+    const clientRect = patientHistoryDisplay.getBoundingClientRect();
+    const totalHeight = clientRect.height;
+    
+    window.scrollTo(0, clientRect.top + window.scrollY);
+    document.body.style.overflow = 'hidden';
+
+    html2canvas(patientHistoryDisplay, {
+        scale: 2,
+        useCORS: true,
+        logging: true,
+        windowHeight: totalHeight,
+        backgroundColor: window.getComputedStyle(patientHistoryDisplay).backgroundColor || '#F9FAFB' 
+    }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `historial_clinico_paciente_${patientId}.${format}`;
+        link.href = canvas.toDataURL(`image/${format}`, 1.0);
+        link.click();
+
+        elementsToHide.forEach(el => el.style.display = '');
+        document.body.style.overflow = originalBodyOverflow;
+        window.scrollTo(0, originalScrollY);
+
+        showAlertModal(`Historial descargado como ${format.toUpperCase()}.`, "Descarga Exitosa");
+
+    }).catch(error => {
+        console.error("Error al generar la imagen del historial:", error);
+        showAlertModal("Hubo un error al descargar la imagen del historial clínico verifique para más detalles.", "Error de Descarga");
+        
+        elementsToHide.forEach(el => el.style.display = '');
+        document.body.style.overflow = originalBodyOverflow;
+        window.scrollTo(0, originalScrollY);
+    });
+}
+
+// ****************************************************************************************************
+// Slider de Imágenes
+// ****************************************************************************************************
+let currentSlide = 0;
+const slidesContainer = document.getElementById('slides-container');
+const slides = slidesContainer ? document.querySelectorAll('.slide') : [];
+
+function moveSlide(direction) {
+    if (!slidesContainer || slides.length === 0) return;
+
+    currentSlide += direction;
+    if (currentSlide < 0) {
+        currentSlide = slides.length - 1;
+    } else if (currentSlide >= slides.length) {
+        currentSlide = 0;
+    }
+    slidesContainer.style.transform = `translateX(-${currentSlide * 100}vw)`;
+}
+
+if (slidesContainer && slides.length > 0) { 
+    setInterval(() => {
+        moveSlide(1);
+    }, 5000);
+}
+
+// ****************************************************************************************************
+// Gráficas (Dashboard Estadísticas)
+// ****************************************************************************************************
+
+const dataEspecialidades = {
+    labels: ['Cardiólogo', 'Endocrinólogo', 'Oncólogo', 'Gastroenterólogo', 'Pediatra', 'Dermatólogo', 'Psiquiatra'],
+    datasets: [{
+        label: 'Número de Consultas',
+        data: [15, 10, 8, 12, 20, 7, 11],
+        backgroundColor: [
+            'rgba(0, 119, 182, 0.6)', // #0077B6
+            'rgba(72, 201, 176, 0.6)', // #48C9B0
+            'rgba(39, 174, 96, 0.6)',  // #27AE60
+            'rgba(231, 76, 60, 0.6)',  // #E74C3C
+            'rgba(241, 196, 15, 0.6)', // #F1C40F
+            'rgba(44, 62, 80, 0.6)',   // #2C3E50
+            'rgba(214, 239, 255, 0.6)' // #D6EFFF
+        ],
+        borderColor: [
+            '#0077B6',
+            '#48C9B0',
+            '#27AE60',
+            '#E74C3C',
+            '#F1C40F',
+            '#2C3E50',
+            '#D6EFFF'
+        ],
+        borderWidth: 1
+    }]
+};
+
+const dataGenero = {
+    labels: ['Femenino', 'Masculino'],
+    datasets: [{
+        label: 'Número de Pacientes',
+        data: [70, 50], 
+        backgroundColor: [
+            'rgba(72, 201, 176, 0.6)', // #48C9B0 (para Femenino)
+            'rgba(0, 119, 182, 0.6)'  // #0077B6 (para Masculino)
+        ],
+        borderColor: [
+            '#48C9B0',
+            '#0077B6'
+        ],
+        borderWidth: 1
+    }]
+};
+
+const dataTratamientos = {
+    labels: ['Completado', 'En Curso', 'Abandonado'],
+    datasets: [{
+        data: [40, 25, 10],
+        backgroundColor: [
+            'rgba(39, 174, 96, 0.6)',  // #27AE60
+            'rgba(241, 196, 15, 0.6)', // #F1C40F
+            'rgba(231, 76, 60, 0.6)'   // #E74C3C
+        ],
+        borderColor: [
+            '#27AE60',
+            '#F1C40F',
+            '#E74C3C'
+        ],
+        borderWidth: 1
+    }]
+};
+
+function renderCharts() {
+    Chart.getChart('radarChart')?.destroy();
+    Chart.getChart('barChart')?.destroy();
+    Chart.getChart('pieChart')?.destroy();
+
+    // Gráfico de Radar - Especialidades Médicas
+    const radarCtx = document.getElementById('radarChart')?.getContext('2d');
+    if (radarCtx) {
+        new Chart(radarCtx, {
+            type: 'radar',
+            data: dataEspecialidades,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { display: false },
+                        suggestedMin: 0,
+                        suggestedMax: 25,
+                        pointLabels: { font: { size: 10 } },
+                        ticks: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'top', labels: { font: { size: 12 } } },
+                    title: { display: true, text: 'Consultas por Especialidad', font: { size: 14 } }
+                }
+            }
+        });
+    }
+
+    // Gráfico de Barras - Pacientes por Género
+    const barCtx = document.getElementById('barChart')?.getContext('2d');
+    if (barCtx) {
+        new Chart(barCtx, {
+            type: 'bar',
+            data: dataGenero,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { ticks: { font: { size: 10 } } },
+                    y: { beginAtZero: true, suggestedMax: 80, ticks: { font: { size: 10 } } }
+                },
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'Pacientes por Género', font: { size: 14 } }
+                }
+            }
+        });
+    }
+
+    // Gráfico de Pastel - Seguimiento de Tratamientos
+    const pieCtx = document.getElementById('pieChart')?.getContext('2d');
+    if (pieCtx) {
+        new Chart(pieCtx, {
+            type: 'pie',
+            data: dataTratamientos,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { font: { size: 12 } } },
+                    title: { display: true, text: 'Seguimiento de Tratamientos', font: { size: 14 } }
+                }
+            }
+        });
+    }
+}
+
+// ****************************************************************************************************
+// Inicialización al cargar la página (ÚNICO DOMContentLoaded)
+// ****************************************************************************************************
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("DEBUG: DOM completamente cargado. Inicializando...");
+
+    // Asegurarse de que los modales estén ocultos al inicio 
+    const loginModal = document.getElementById('loginRegisterModal');
+    if (loginModal) loginModal.style.display = 'none';
+    const downloadModal = document.getElementById('downloadHistoryModal');
+    if (downloadModal) downloadModal.style.display = 'none';
+
+    // Inicializar la interfaz de usuario según el rol (invitado por defecto)
+    updateUIForRole();
+
+    updatePatientIdField();
+    mostrarPacientes();
+
+    // Pre-rellenar ID del paciente en formulario de exámenes (Gestión de Citas ahora es manual)
+    if (pacientes.length > 0) {
+        const lastPatient = pacientes[pacientes.length - 1];
+        const examenPacienteId = document.getElementById('examenPacienteId');
+        if (examenPacienteId) examenPacienteId.value = lastPatient.id;
+    } else {
+        const examenPacienteId = document.getElementById('examenPacienteId');
+        if (examenPacienteId) {
+            examenPacienteId.value = '';
+            examenPacienteId.readOnly = false;
+            examenPacienteId.classList.remove('readonly-field');
+        }
+    }
+
+    updateCitaNumberField();
+    updateExamenNumberField();
+    
+    // =================================================================
+    // LISTENER MODIFICADO PARA EL BOTÓN "AGENDAR CITA"
+    // =================================================================
+    const agendarCitaBtn = document.getElementById('agendar-cita-btn');
+    if (agendarCitaBtn) {
+        agendarCitaBtn.addEventListener('click', function(event) {
+            event.preventDefault(); 
+            
+            if (currentUserRole === ROLES.GUEST) {
+                // Para invitados, mostrar la sección "Acerca de Nosotros"
+                const acercaSection = document.getElementById('acerca-de-nosotros-section');
+                if (acercaSection) {
+                    acercaSection.classList.remove('hidden');
+                    acercaSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            } else if (currentUserRole === ROLES.PATIENT) {
+                // Para pacientes, llevarlos a su lista de citas
+                const patientAppointmentsSection = document.getElementById('patient-appointments-section');
+                if (patientAppointmentsSection) {
+                    patientAppointmentsSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
+    }
+
+    // ******************************************************************
+    // INICIALIZACIÓN DE FULLCALENDAR
+    // ******************************************************************
+    const calendarEl = document.getElementById('calendar');
+    if (calendarEl) {
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'es',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            editable: true,
+            eventLimit: true,
+            events: function(fetchInfo, successCallback, failureCallback) {
+                try {
+                    const formattedEvents = citas.map(cita => {
+                        const paciente = pacientes.find(p => p.id === cita.idPaciente);
+                        const pacienteNombre = paciente ? `${paciente.nombre} ${paciente.apellidos}` : 'Desconocido';
+                        return {
+                            id: cita.idInterno,
+                            title: `${cita.motivo} (${cita.doctor}) - P: ${pacienteNombre}`,
+                            start: cita.fechaRegistro,
+                            extendedProps: {
+                                idPaciente: cita.idPaciente,
+                                especialidad: cita.especialidad,
+                                estado: cita.estado,
+                                numeroCita: cita.numeroCita,
+                                observaciones: cita.observaciones
+                            },
+                            color: cita.estado === 'Confirmada' ? '#27AE60' : (cita.estado === 'Pendiente' ? '#F39C12' : (cita.estado === 'Realizada' ? '#0077B6' : '#E74C3C'))
+                        };
+                    });
+                    successCallback(formattedEvents);
+                } catch (error) {
+                    console.error("Error al formatear eventos para el calendario:", error);
+                    failureCallback(error);
+                }
+            },
+            eventDidMount: function(info) {
+
+            },
+            eventClick: function(info) {
+                showAlertModal(
+                    'Cita: ' + info.event.title + 
+                    '\nFecha: ' + info.event.start.toLocaleDateString() +
+                    '\nEstado: ' + (info.event.extendedProps.estado || 'N/A') +
+                    '\nObservaciones: ' + (info.event.extendedProps.observaciones || 'N/A'),
+                    "Detalles de la Cita"
+                );
+            },
+            dateClick: function(info) {
+                const fechaInput = document.getElementById('fechaRegistro');
+                if (fechaInput) {
+                    fechaInput.value = info.dateStr;
+                    showAlertModal('Fecha seleccionada en el formulario de citas: ' + info.dateStr, "Fecha Seleccionada");
+                } else {
+                    showAlertModal('Fecha seleccionada: ' + info.dateStr, "Fecha Seleccionada");
+                }
+            },
+            eventDrop: function(info) {
+                const eventId = info.event.id;
+                const newDate = info.event.start.toISOString().slice(0,10); 
+                
+                const citaIndex = citas.findIndex(c => c.idInterno === eventId);
+                if (citaIndex !== -1) {
+                    citas[citaIndex].fechaRegistro = newDate;
+                    localStorage.setItem('citas', JSON.stringify(citas));
+                    mostrarCitas(); 
+                    showAlertModal('Fecha de la cita actualizada: ' + newDate, "Cita Actualizada");
+                } else {
+                    console.error('Error: No se encontró la cita para actualizar.');
+                    showAlertModal('Error: No se encontró la cita para actualizar.', 'Error de Actualización');
+                }
+            }
+        });
+        calendar.render();
+        console.log('FullCalendar inicializado y citas cargadas.');
+    } else {
+        console.error('No se encontró el elemento con ID "calendar". Asegúrate de que existe en tu HTML.');
+    }
+
+    if (especialidadCitaSelect && especialidadCitaSelect.value) {
+        especialidadCitaSelect.dispatchEvent(new Event('change'));
+    }
+
+    // Asegurarse de que el input de ID de paciente en el historial clínico tenga el valor del paciente logueado
+    if (currentUserRole === ROLES.PATIENT && currentLoggedInPatientId !== null) {
+        const searchPatientIdInput = document.getElementById('searchPatientId');
+        if (searchPatientIdInput) {
+            searchPatientIdInput.value = currentLoggedInPatientId;
+            loadPatientHistory(); // Cargar automáticamente el historial del paciente logueado
+            displayPatientPendingAppointments(); // Cargar citas pendientes del paciente logueado
+        }
+    }
+
+    // Renderizar las gráficas al cargar la página, ya que son visibles para Guest y Patient
+    renderCharts();
+
+    // Listener para el campo de búsqueda de pacientes
+    const patientSearchInput = document.getElementById('patientSearchInput');
+    if (patientSearchInput) {
+        patientSearchInput.addEventListener('input', searchPatients);
+    }
+
+    // Listener para cerrar los modales al hacer click fuera de ellos
+    window.addEventListener('click', function(event) {
+        const loginRegisterModal = document.getElementById('loginRegisterModal');
+        const downloadHistoryModal = document.getElementById('downloadHistoryModal');
+        const customAlertConfirmModal = document.getElementById('customModal');
+
+        if (loginRegisterModal && event.target === loginRegisterModal) {
+            closeLoginModal();
+        }
+        if (downloadHistoryModal && event.target === downloadHistoryModal) {
+            closeDownloadModal();
+        }
+        if (customAlertConfirmModal && event.target === customAlertConfirmModal) {
+            customAlertConfirmModal.style.display = 'none'; 
+        }
+    });
+
+    // Cargar las citas pendientes del paciente si el usuario ya está logueado al recargar la página
+    if (currentUserRole === ROLES.PATIENT && currentLoggedInPatientId !== null) {
+        displayPatientPendingAppointments();
+    }
+});
